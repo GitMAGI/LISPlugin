@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ws.connectors.connect.mirth.com/" name="DefaultAcceptMessageService" targetNamespace="http://ws.connectors.connect.mirth.com/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://192.168.0.180:8081/services/Mirth?xsd=1" namespace="http://ws.connectors.connect.mirth.com/" />
+    </xsd:schema>
+  </types>
+  <message name="acceptMessage">
+    <part name="parameters" element="tns:acceptMessage" />
+  </message>
+  <message name="acceptMessageResponse">
+    <part name="parameters" element="tns:acceptMessageResponse" />
+  </message>
+  <portType name="DefaultAcceptMessage">
+    <operation name="acceptMessage">
+      <input message="tns:acceptMessage" />
+      <output message="tns:acceptMessageResponse" />
+    </operation>
+  </portType>
+  <binding name="DefaultAcceptMessagePortBinding" type="tns:DefaultAcceptMessage">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="acceptMessage">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="DefaultAcceptMessageService">
+    <port name="DefaultAcceptMessagePort" binding="tns:DefaultAcceptMessagePortBinding">
+      <soap:address location="http://192.168.0.180:8081/services/Mirth" />
+    </port>
+  </service>
+</definitions>
