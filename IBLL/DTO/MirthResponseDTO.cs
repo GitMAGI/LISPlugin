@@ -22,7 +22,6 @@ namespace IBLL.DTO
         public string EsamID { get; set; }
         public string AnalID { get; set; }
         public string Status { get; set; }
-        public string Description { get; set; }
-        
+        public string Description { get; set; }        
     }
 }

@@ -628,5 +628,230 @@ namespace BusinessLogicLayer
             // 7. Restituire il DTO
             return data;
         }
+
+        public List<RisultatoDTO> Check4Results(string analid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            List<RisultatoDTO> riss = null;
+
+            riss = this.GetRisultatiByAnalId(analid);
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return riss;
+        }
+        public List<AnalisiDTO> Check4Analysis(string richid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            List<AnalisiDTO> anals = null;
+
+            anals = this.GetAnalisisByRichiesta(richid);
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return anals;
+        }
+        public List<RichiestaLISDTO> Check4Exams(string evenid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            List<RichiestaLISDTO> exams = null;
+
+            exams = this.GetRichiesteLISByEven(evenid);
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return exams;
+        }
+        public RefertoDTO Check4Report(string richid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            RefertoDTO refe = null;
+
+            refe = this.GetRefertoByEsamId(richid);
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return refe;
+        }
+        public List<LabelDTO> Check4Label(string richid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            List<LabelDTO> labes = null;
+
+            labes = this.GetLabelsByRichiesta(richid);
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return labes;
+        }
+
+        public MirthResponseDTO CancelRequest(string richid, ref string errorString)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            MirthResponseDTO data = null;
+
+            try
+            {
+                // 0. Check if richid is a numeric Value
+                int richid_int = 0;
+                if (!int.TryParse(richid, out richid_int))
+                {
+                    string msg = string.Format("ID of the riquest is not an integer string. {0} is not a valid ID for this context!", richid);
+                    errorString = msg;
+                    log.Info(msg);
+                    log.Error(msg);
+                    throw new Exception(msg);
+                }
+
+                // 1. Check if Canceling is allowed
+                if (CheckIfCancelingIsAllowed(richid, ref errorString))
+                {
+                    string msg = string.Format("Canceling of the request with id {0} is denied! errorString: {1}", richid, errorString);
+                    log.Info(msg);
+                    log.Error(msg);
+                    throw new Exception(msg);
+                }
+
+                // 2. Check if ESAM and ANAL exist
+                RichiestaLISDTO chkEsam = this.GetRichiestaLISById(richid);
+                List<AnalisiDTO> chkAnals = this.GetAnalisisByRichiesta(richid);
+                if (chkEsam == null || chkAnals == null || (chkAnals != null && chkAnals.Count == 0))
+                {
+                    string msg = "Error! No Esam or Anal records found referring to EsamID " + richid + "! A request must be Scheduled first!";
+                    errorString = msg;
+                    log.Info(msg);
+                    log.Error(msg);
+                    return null;
+                }
+
+                // 3. Settare Stato a "DELETNG"
+                int res = ChangeHL7StatusAndMessageAll(richid, "DELETNG");
+
+                // 4. Invio a Mirth
+                string hl7orl = SendMirthRequest(richid);
+                if (hl7orl == null)
+                {
+                    string msg = "Mirth Returned an Error!";
+                    errorString = msg;
+                    // 4.e1 Cambiare stato in errato
+                    int err = ChangeHL7StatusAndMessageAll(richid, "ERRORED", msg);
+                    // 4.e2 Restituire null
+                    return null;
+                }
+
+                // 5. Estrarre i dati dalla risposta di Mirth
+                data = ORLParser(hl7orl);
+
+                // 6. Settare Stato a seconda della risposta
+                string status = "DELETED";
+                if (data.ACKCode != "AA")
+                    status = "ERRORED";                
+                RichiestaLISDTO RichUpdt = ChangeHL7StatusAndMessageRichiestaLIS(richid, status, data.ACKDesc);
+
+                List<ORCStatus> orcs = data.ORCStatus;
+                if (orcs != null)
+                    foreach (ORCStatus orc in orcs)
+                    {
+                        string desc = orc.Description;
+                        string stat = orc.Status;
+                        string analid = orc.AnalID;
+                        List<AnalisiDTO> AnalUpdts = ChangeHL7StatusAndMessageAnalisis(new List<string>() { analid }, stat, desc);
+                    }                
+            }
+            catch (Exception ex)
+            {
+                string msg = "An Error occured! Exception detected!";
+                log.Info(msg);
+                log.Error(msg + "\n" + ex.Message);
+            }                     
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return data;
+        }
+        public bool CheckIfCancelingIsAllowed(string richid, ref string errorString)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            bool res = true;
+
+            if (errorString == null)
+                errorString = "";
+
+            RefertoDTO refe = this.GetRefertoByEsamId(richid);
+
+            if(refe == null)
+            {
+                List<AnalisiDTO> anals = this.GetAnalisisByRichiesta(richid);
+                foreach(AnalisiDTO anal in anals)
+                {
+                    List<RisultatoDTO> riss = this.GetRisultatiByAnalId(anal.analidid.Value.ToString());
+                    if (riss != null)
+                    {
+                        string report = string.Format("Analisi {0} già eseguita! Impossibile Cancellare!", anal.analidid.Value.ToString());
+                        res = false;
+                        if (errorString != "")
+                            errorString += "\r\n" + report;
+                        else
+                            errorString += report;
+                    }
+                }                
+            }
+            else
+            {                
+                string report = string.Format("Esame {0} già refertato! Id referto {1}!", richid, refe.refeidid);
+                res = false;
+                if (errorString != "")
+                    errorString += "\r\n" + report;
+                else
+                    errorString += report;
+            }
+
+            if (errorString == "")
+                errorString = null;
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return res;
+        }
+
+        public List<RisultatoDTO> RetrieveResults(string richid, ref string errorString)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
