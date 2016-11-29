@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HL7StatesRichiestaLIS.cs" />
+    <Compile Include="HL7StatesAnalisi.cs" />
     <Compile Include="DTO\EventoDTO.cs" />
     <Compile Include="DTO\LabelDTO.cs" />
     <Compile Include="DTO\EpisodioDTO.cs" />

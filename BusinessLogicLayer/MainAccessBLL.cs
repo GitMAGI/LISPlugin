@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IBLL.DTO;
 using System.Diagnostics;
 using GeneralPurposeLib;
+using System.Linq;
 
 namespace BusinessLogicLayer
 {
@@ -430,7 +431,7 @@ namespace BusinessLogicLayer
 
             log.Info(string.Format("Starting ..."));
                         
-            string hl7_stato = "IDLE";
+            string hl7_stato = IBLL.HL7StatesRichiestaLIS.Idle;
             string res = null;
 
             RichiestaLISDTO esamInserted = null;
@@ -553,7 +554,7 @@ namespace BusinessLogicLayer
                 }
 
                 // 2. Settare Stato a "SEDNING"
-                int res = ChangeHL7StatusAndMessageAll(richid, "SENDING");
+                int res = ChangeHL7StatusAndMessageAll(richid, IBLL.HL7StatesRichiestaLIS.Sending);
 
                 // 3. Invio a Mirth
                 string hl7orl = SendMirthRequest(richid);
@@ -562,7 +563,7 @@ namespace BusinessLogicLayer
                     string msg = "Mirth Returned an Error!";
                     errorString = msg;
                     // 2.e1 Cambiare stato in errato
-                    int err = ChangeHL7StatusAndMessageAll(richid, "ERRORED", msg);
+                    int err = ChangeHL7StatusAndMessageAll(richid, IBLL.HL7StatesRichiestaLIS.Errored, msg);
                     // 2.e2 Restituire null
                     return null;
                 }
@@ -571,14 +572,14 @@ namespace BusinessLogicLayer
                 data = ORLParser(hl7orl);
 
                 // 5. Settare Stato a seconda della risposta
-                string status = "SENT";
+                string status = IBLL.HL7StatesRichiestaLIS.Sent;
                 if (data.ACKCode != "AA")
-                    status = "ERRORED";
+                    status = IBLL.HL7StatesRichiestaLIS.Errored;
                 else
                 {
                     if (data.Labes != null)
                     {
-                        status = "LABEL_RECEIVED";
+                        status = IBLL.HL7StatesRichiestaLIS.Labelled;
                     }
                     else
                     {
@@ -693,7 +694,7 @@ namespace BusinessLogicLayer
 
             return refe;
         }
-        public List<LabelDTO> Check4Label(string richid)
+        public List<LabelDTO> Check4Labels(string richid)
         {
             Stopwatch tw = new Stopwatch();
             tw.Start();
@@ -754,7 +755,7 @@ namespace BusinessLogicLayer
                 }
 
                 // 3. Settare Stato a "DELETNG"
-                int res = ChangeHL7StatusAndMessageAll(richid, "DELETNG");
+                int res = ChangeHL7StatusAndMessageAll(richid, IBLL.HL7StatesRichiestaLIS.Deleting);
 
                 // 4. Invio a Mirth
                 string hl7orl = SendMirthRequest(richid);
@@ -763,7 +764,7 @@ namespace BusinessLogicLayer
                     string msg = "Mirth Returned an Error!";
                     errorString = msg;
                     // 4.e1 Cambiare stato in errato
-                    int err = ChangeHL7StatusAndMessageAll(richid, "ERRORED", msg);
+                    int err = ChangeHL7StatusAndMessageAll(richid, IBLL.HL7StatesRichiestaLIS.Errored, msg);
                     // 4.e2 Restituire null
                     return null;
                 }
@@ -772,9 +773,9 @@ namespace BusinessLogicLayer
                 data = ORLParser(hl7orl);
 
                 // 6. Settare Stato a seconda della risposta
-                string status = "DELETED";
+                string status = IBLL.HL7StatesRichiestaLIS.Deleted;
                 if (data.ACKCode != "AA")
-                    status = "ERRORED";                
+                    status = IBLL.HL7StatesRichiestaLIS.Errored;                
                 RichiestaLISDTO RichUpdt = ChangeHL7StatusAndMessageRichiestaLIS(richid, status, data.ACKDesc);
 
                 List<ORCStatus> orcs = data.ORCStatus;
@@ -851,7 +852,80 @@ namespace BusinessLogicLayer
 
         public List<RisultatoDTO> RetrieveResults(string richid, ref string errorString)
         {
-            throw new NotImplementedException();
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            List<RisultatoDTO> riss = null;
+
+            try
+            {
+                log.Info("Searching for Analysis' related to Request ID " + richid + " ...");
+                List<AnalisiDTO> anals = this.GetAnalisisByRichiesta(richid);
+                log.Info(string.Format("Found {0} Analysis' related to Request ID {1}.", anals != null ? anals.Count : 0, richid));
+                foreach (AnalisiDTO anal in anals)
+                {
+                    log.Info("Searching for Results related to Analysis ID " + anal.analidid.Value.ToString() + " ...");
+                    List<RisultatoDTO> anres = this.GetRisultatiByAnalId(anal.analidid.Value.ToString());
+                    if (anres != null && anres.Count > 0)
+                    {
+                        log.Info(string.Format("Found {0} Results related to Analysis ID {1}.", anres, anal.analidid.Value.ToString()));
+                        //1. Check if Analisi is "Executed"
+                        //1.1 If not, Update Analisi to "Executed"
+                        log.Info(string.Format("HL7 Status of Analysis with ID {0}, is '{1}'. HL7 Message is '{2}'.", anal.analidid.Value.ToString(), anal.hl7_stato, anal.hl7_msg));
+                        if (anal.hl7_stato != IBLL.HL7StatesAnalisi.Executed)
+                        {
+                            List<AnalisiDTO> tmp = ChangeHL7StatusAndMessageAnalisis(new List<string>() { anal.analidid.Value.ToString() }, IBLL.HL7StatesAnalisi.Executed);
+                            log.Info(string.Format("HL7 Status of Analysis with ID {0}, has been updated to '{1}'.", anal.analidid.Value.ToString(), tmp != null ? tmp[0].hl7_stato : "--error occurred--"));
+                        }
+                        //2. Add to Collection
+                        if (riss == null)
+                            riss = new List<RisultatoDTO>();
+                        riss.AddRange(anres);
+                        log.Info(string.Format("{0} Results related to Analysis ID {1}, has been added to the Results Collection (actually {2} total items).", anres.Count, anal.analidid.Value.ToString(), riss.Count));
+                    }
+                    else
+                    {
+                        log.Info(string.Format("Found No Results related to Analysis ID {0}.", anal.analidid.Value.ToString()));
+                        log.Info("Searching for Raw Results related to Request ID - Analysis ID " + richid + "-" + anal.analidid.Value.ToString() + " ...");
+                        List<RisultatoDTO> anresNew = this.GetRisultatiByEsamAnalId(richid + "-" + anal.analidid.Value.ToString());
+                        log.Info(string.Format("Found {0} Raw Results related to Request ID - Analysis ID : {1}-{2}.", anresNew != null ? anres.Count : 0, richid, anal.analidid.Value.ToString()));
+                        if (anresNew != null && anresNew.Count > 0)
+                        {
+                            //1. Add new Risultato as Executed                            
+                            List<RisultatoDTO> news = this.AddRisultati(anresNew);                            
+                            log.Info(string.Format("{0} Raw Results Converted and Written into DB. They are Related to Analysis ID {1}. ANRE ID are '{2}'.", news != null ? news.Count : 0, anal.analidid.Value.ToString(), news != null ? string.Join(", ", news.Select(p => p.anreidid).ToList().ToArray()) : ""));
+                            //2. Update Analisi to "Executed"                            
+                            log.Info(string.Format("HL7 Status of Analysis with ID {0}, is '{1}'. HL7 Message is '{2}'.", anal.analidid.Value.ToString(), anal.hl7_stato, anal.hl7_msg));
+                            List<AnalisiDTO> tmp = ChangeHL7StatusAndMessageAnalisis(new List<string>() { anal.analidid.Value.ToString() }, IBLL.HL7StatesAnalisi.Executed);
+                            log.Info(string.Format("HL7 Status of Analysis with ID {0}, has been updated to '{1}'.", anal.analidid.Value.ToString(), tmp != null ? tmp[0].hl7_stato : "--error occurred--"));
+                            //3. Add to Collection                        
+                            if (news != null && news.Count > 0)
+                            {
+                                if (riss == null)
+                                    riss = new List<RisultatoDTO>();
+                                riss.AddRange(news);
+                                log.Info(string.Format("{0} Results related to Analysis ID {1}, has been added to the Results Collection (actually {2} total items).", news.Count, anal.analidid.Value.ToString(), riss.Count));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = "An Error occured! Exception detected!";
+                log.Info(msg);
+                log.Error(msg + "\n" + ex.Message);
+            }
+
+            if (errorString == "")
+                errorString = null;
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return riss;
         }
     }
 }
