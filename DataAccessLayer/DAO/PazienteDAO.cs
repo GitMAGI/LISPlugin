@@ -36,12 +36,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(HLTDesktopConnectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    pazi = PazienteMapper.PaziMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", pazi.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        pazi = PazienteMapper.PaziMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(pazi), LibString.TypeName(pazi)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -131,9 +133,12 @@ namespace DataAccessLayer
                 List<string> autoincrement = new List<string>() { "PaZiIdiD" };
                 // INSERT NUOVA
                 DataTable res = DBSQL.InsertBackOperation(connectionString, table, data, pk, autoincrement);
-                if (res != null && res.Rows.Count > 0)
-                    result = PazienteMapper.PaziMapper(res.Rows[0]);
-                log.Info(string.Format("Inserted new record with ID: {0}!", result.paziidid));
+                if (res != null)
+                    if (res.Rows.Count > 0)
+                    {
+                        result = PazienteMapper.PaziMapper(res.Rows[0]);
+                        log.Info(string.Format("Inserted new record with ID: {0}!", result.paziidid));
+                    }                    
             }
             catch (Exception ex)
             {

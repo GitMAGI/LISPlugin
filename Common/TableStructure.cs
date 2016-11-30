@@ -188,7 +188,6 @@ namespace GeneralPurposeLib
             return result;
         }
 
-
         public bool CheckAndConstranitsValidation<T>(List<T> objectData, ref List<string> errReport, ref List<string> warnReport, ref List<string> infoReport)
         {
             bool valid = true;

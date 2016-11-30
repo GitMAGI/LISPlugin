@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{771AC24E-550C-4C32-942E-6A9770D74C63}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{3A10774F-A379-454B-B1AD-F3A55D9294E2}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestPlugin</RootNamespace>
-    <AssemblyName>TestPlugin</AssemblyName>
+    <RootNamespace>ILISPlugin</RootNamespace>
+    <AssemblyName>ILISPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,28 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ILIS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\GeneralPurposeLib.csproj">
-      <Project>{a1d784d1-835d-425d-bcc8-04c9c04ba474}</Project>
-      <Name>GeneralPurposeLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IBLL\IBLL.csproj">
       <Project>{26f90ba8-92ee-4c58-8c45-dcac2a9662a9}</Project>
       <Name>IBLL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ILISPlugin\ILISPlugin.csproj">
-      <Project>{3a10774f-a379-454b-b1ad-f3a55d9294e2}</Project>
-      <Name>ILISPlugin</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LISPlugin\LISPlugin.csproj">
-      <Project>{b511e8c1-9576-4486-876f-cae8f9dd439a}</Project>
-      <Name>LISPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

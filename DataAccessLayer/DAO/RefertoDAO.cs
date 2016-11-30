@@ -38,23 +38,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    refe = RefertoMapper.RefeMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", refe.GetType().ToString()));
-                }
-
-                log.Info(string.Format("Query Executed! Retrieved {0} records!", data.Rows.Count));
-
-                if (data != null && data.Rows.Count == 1)
-                {
-                    DataRow row = data.Rows[0];
-
-                    refe = RefertoMapper.RefeMapper(row);
-                                        
-                    log.Info(string.Format("Record mapped to {0}", refe.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        refe = RefertoMapper.RefeMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(refe), LibString.TypeName(refe)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -98,23 +89,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    refe = RefertoMapper.RefeMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", refe.GetType().ToString()));
-                }
-
-                log.Info(string.Format("Query Executed! Retrieved {0} records!", data.Rows.Count));
-
-                if (data != null && data.Rows.Count == 1)
-                {
-                    DataRow row = data.Rows[0];
-
-                    refe = RefertoMapper.RefeMapper(row);
-
-                    log.Info(string.Format("Record mapped to {0}", refe.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        refe = RefertoMapper.RefeMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(refe), LibString.TypeName(refe)));
+                    }                    
                 }
             }
             catch (Exception ex)

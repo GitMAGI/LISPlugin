@@ -36,12 +36,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    risG = Mappers.RisultatoMapper.AnreTrashMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", risG.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        risG = Mappers.RisultatoMapper.AnreTrashMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(risG), LibString.TypeName(risG)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -58,7 +60,6 @@ namespace DataAccessLayer
 
             return risG;
         }
-
         public IDAL.VO.RisultatoGrezzoVO GetRisultatoGrezzoByEsamAnalId(string id)
         {
             Stopwatch tw = new Stopwatch();
@@ -86,12 +87,11 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
                 if (data != null)
                 {
                     risG = Mappers.RisultatoMapper.AnreTrashMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", risG.GetType().ToString()));
+                    log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(risG), LibString.TypeName(risG)));
                 }
             }
             catch (Exception ex)
@@ -108,6 +108,5 @@ namespace DataAccessLayer
 
             return risG;
         }
-
     }
 }

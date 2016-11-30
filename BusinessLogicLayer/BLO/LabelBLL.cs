@@ -20,9 +20,9 @@ namespace BusinessLogicLayer
 
             try
             {
-                List<IDAL.VO.LabelVO> dalRes = this.dal.GetLabelsByRichiesta(richidid);
-                labes = LabelMapper.LabeMapper(dalRes);
-                log.Info(string.Format("{0} VOs mapped to {0}", labes.Count, labes.GetType().ToString()));
+                List<IDAL.VO.LabelVO> labes_ = this.dal.GetLabelsByRichiesta(richidid);
+                labes = LabelMapper.LabeMapper(labes_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(labes), LibString.TypeName(labes_), LibString.TypeName(labes)));
             }
             catch (Exception ex)
             {
@@ -47,9 +47,9 @@ namespace BusinessLogicLayer
 
             try
             {
-                IDAL.VO.LabelVO dalRes = this.dal.GetLabelById(labeidid);
-                labe = LabelMapper.LabeMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", labe.GetType().ToString()));
+                IDAL.VO.LabelVO labe_ = this.dal.GetLabelById(labeidid);
+                labe = LabelMapper.LabeMapper(labe_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(labe), LibString.TypeName(labe_), LibString.TypeName(labe)));
             }
             catch (Exception ex)
             {
@@ -70,7 +70,7 @@ namespace BusinessLogicLayer
 
             log.Info(string.Format("Starting ..."));
 
-            int result = 0;
+            int stored = 0;
             IBLL.DTO.LabelDTO toReturn = null;
             string id = data.labeidid.ToString();
 
@@ -84,9 +84,10 @@ namespace BusinessLogicLayer
                     return null;
                 }                
                 IDAL.VO.LabelVO data_ = LabelMapper.LabeMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));
-                result = dal.SetLabel(data_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
+                stored = dal.SetLabel(data_);
                 toReturn = GetLabelById(data.labeidid.ToString());
+                log.Info(string.Format("{0} {1} items added and {2} {3} retrieved back!", stored, LibString.TypeName(data_), LibString.ItemsNumber(toReturn), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -113,10 +114,11 @@ namespace BusinessLogicLayer
             {
                 data.labeidid = null;
                 IDAL.VO.LabelVO data_ = LabelMapper.LabeMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));                
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
                 IDAL.VO.LabelVO stored = dal.NewLabel(data_);
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
                 toReturn = LabelMapper.LabeMapper(stored);
-                log.Info(string.Format("1 {0} mapped to {1}", stored.GetType().ToString(), toReturn.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -142,6 +144,7 @@ namespace BusinessLogicLayer
             try
             {
                 result = dal.DeleteLabelById(labeidid);
+                log.Info(string.Format("{0} items Deleted!", result));
             }
             catch (Exception ex)
             {
@@ -162,16 +165,17 @@ namespace BusinessLogicLayer
             
             log.Info(string.Format("Starting ..."));
 
-            List<IBLL.DTO.LabelDTO> labes = null;
+            List<IBLL.DTO.LabelDTO> toReturn = null;
 
             try
             {
                 data.ForEach(p => p.labeidid = null);
                 List<IDAL.VO.LabelVO> data_ = LabelMapper.LabeMapper(data);
-                log.Info(string.Format("{0} {1} mapped to {2}", data_.Count, data.GetType().ToString(), data_.GetType().ToString()));
-                List<IDAL.VO.LabelVO> labes_ = dal.NewLabels(data_);
-                labes = LabelMapper.LabeMapper(labes_);
-                log.Info(string.Format("{0} {1} mapped to {2}", labes.Count, labes_.GetType().ToString(), labes.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
+                List<IDAL.VO.LabelVO> stored = dal.NewLabels(data_);
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
+                toReturn = LabelMapper.LabeMapper(stored);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -183,7 +187,7 @@ namespace BusinessLogicLayer
             tw.Stop();
             log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
 
-            return labes;
+            return toReturn;
         }
     }
 }

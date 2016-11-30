@@ -7,31 +7,17 @@ namespace TestPlugin
 {
     class Program
     {
-        DataAccessLayer.LISDAL dal = null;
-        BusinessLogicLayer.LISBLL bll = null;
-
-        public void init()
-        {
-            dal = new DataAccessLayer.LISDAL();
-            bll = new BusinessLogicLayer.LISBLL(dal);
-        }
-
         static void Main(string[] args)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            DataAccessLayer.LISDAL dal = new DataAccessLayer.LISDAL();
-            BusinessLogicLayer.LISBLL bll = new BusinessLogicLayer.LISBLL(dal);
-
-            int esamidid = 8194053;
-
             RichiestaLISDTO esam = new RichiestaLISDTO()
             {
-                esameven = 0,
+                esameven = 2182265,
                 esamtipo = 0,
                 esampren = DateTime.Now,
-                hl7_stato = "SENDING"
+                hl7_stato = IBLL.HL7StatesRichiestaLIS.Sending,
             };
             // Insert ESAM
 
@@ -43,8 +29,9 @@ namespace TestPlugin
                     analcodi = "EMO",
                     analnome = "EMOCROMO",
                     analflro = 0,
+                    analinvi = 0,
                     analextb = "235",
-                    hl7_stato = "SENDING"
+                    hl7_stato = IBLL.HL7StatesAnalisi.Sending,
                 },
                 new AnalisiDTO()
                 {
@@ -52,8 +39,9 @@ namespace TestPlugin
                     analcodi = "AMI",
                     analnome = "AMILASI",
                     analflro = 0,
+                    analinvi = 0,
                     analextb = "273",
-                    hl7_stato = "SENDING"
+                    hl7_stato = IBLL.HL7StatesAnalisi.Sending,
                 },
                 new AnalisiDTO()
                 {
@@ -61,22 +49,40 @@ namespace TestPlugin
                     analcodi = "BIF",
                     analnome = "BILIRUBINA DIRETTA",
                     analflro = 0,
+                    analinvi = 0,
                     analextb = "281",
-                    hl7_stato = "SENDING"
+                    hl7_stato = IBLL.HL7StatesAnalisi.Sending,
                 },
             };
 
-            //List<AnalisiDTO> data = bll.GetAnalisisByRichiesta("8682276");
+            string errs = null;
 
-            //string richid = bll.ScheduleNewRequest(esam, anals);
-            //string richid = "8682283";
-            //MirthResponseDTO result = bll.SubmitNewRequest(richid);
-            //int did = bll.ChangeHL7StatusAndMessageAll(richid, "SENINDG", null);
+            LISPlugin.LIS lis = new LISPlugin.LIS();
 
-            string esamanalid = "8194054-607448";
-            List<RisultatoDTO> ress = bll.GetRisultatiByEsamAnalId(esamanalid);
+            //string richid = lis.ScheduleNewRequest(esam, anals, ref errs);
+            string evenid = "2182265";
+            string richid = "8682284";
+            string analid1 = "4645449";
+            string analid2 = "4645450";
+            string analid3 = "4645451";
 
-            List<RisultatoDTO> inserted = bll.AddRisultati(ress);
+            //List<RichiestaLISDTO> richs = lis.Check4Exams(evenid);
+            //List<AnalisiDTO> anals_ = lis.Check4Analysis(richid);
+
+            //MirthResponseDTO resp = lis.SubmitNewRequest(richid, ref errs);
+            //List<LabelDTO> labes = lis.Check4Labels(richid);
+
+            //List<RisultatoDTO> riss = lis.RetrieveResults(richid, ref errs);
+
+            //List<RisultatoDTO> riss = lis.Check4Results(analid1);
+
+            //bool cnl = lis.CheckIfCancelingIsAllowed(richid, ref errs);
+
+            List<int> red = null;
+
+            int r = 0;
+            if (red != null && red.Count > 0)
+                r = 1;
 
             sw.Stop();
 
@@ -84,8 +90,6 @@ namespace TestPlugin
 
             Console.WriteLine("Press a key to Close!");
             Console.ReadKey();
-        }
-
-        
+        }                
     }
 }

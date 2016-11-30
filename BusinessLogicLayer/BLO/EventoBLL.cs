@@ -20,7 +20,7 @@ namespace BusinessLogicLayer
             {
                 IDAL.VO.EventoVO dalRes = this.dal.GetEventoById(id);
                 epis = EventoMapper.EvenMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", epis.GetType().ToString()));
+                log.Info(string.Format("{0} VOs mapped to {1}", LibString.ItemsNumber(epis), LibString.TypeName(epis)));
             }
             catch (Exception ex)
             {
@@ -47,9 +47,11 @@ namespace BusinessLogicLayer
             {
                 data.evenidid = null;
                 IDAL.VO.EventoVO data_ = EventoMapper.EvenMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
                 IDAL.VO.EventoVO stored = dal.NewEvento(data_);
-                log.Info(string.Format("1 {0} mapped to {1}", stored.GetType().ToString(), toReturn.GetType().ToString()));
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
+                toReturn = EventoMapper.EvenMapper(stored);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -70,7 +72,7 @@ namespace BusinessLogicLayer
 
             log.Info(string.Format("Starting ..."));
 
-            int result = 0;
+            int stored = 0;
             IBLL.DTO.EventoDTO toReturn = null;
             string id = data.evenidid.ToString();
 
@@ -84,9 +86,10 @@ namespace BusinessLogicLayer
                     return null;
                 }
                 IDAL.VO.EventoVO data_ = EventoMapper.EvenMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));
-                result = dal.SetEvento(data_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
+                stored = dal.SetEvento(data_);
                 toReturn = GetEventoById(id);
+                log.Info(string.Format("{0} {1} items added and {2} {3} retrieved back!", stored, LibString.TypeName(data_), LibString.ItemsNumber(toReturn), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {

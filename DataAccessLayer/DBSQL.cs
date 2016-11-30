@@ -72,7 +72,7 @@ namespace DataAccessLayer
                         dataTable = new DataTable();
                         dataTable.Load(reader);
                     }
-                    log.Info(string.Format("Query executed! Result count: {0}", dataTable.Rows.Count));
+                    log.Info(string.Format("Query executed! Result count: {0}", LibString.ItemsNumber(dataTable)));
                     connection.Close();
                     log.Info("Connection Closed!");
                 }
@@ -117,7 +117,7 @@ namespace DataAccessLayer
                         dataTable = new DataTable();
                         dataTable.Load(reader);
                     }
-                    log.Info(string.Format("Query executed! Result count: {0}", dataTable.Rows.Count));
+                    log.Info(string.Format("Query executed! Result count: {0}", LibString.ItemsNumber(dataTable)));
                     connection.Close();
                     log.Info("Connection Closed!");
 
@@ -280,7 +280,7 @@ namespace DataAccessLayer
                 }
                     
 
-                log.Info(string.Format("Query Executed! Retrieved {0} records!", data.Rows.Count));
+                log.Info(string.Format("Query Executed! Retrieved {0} records!", LibString.ItemsNumber(data)));
 
                 return data;
             }
@@ -313,11 +313,7 @@ namespace DataAccessLayer
 
                 foreach (var prop in dataVO.GetType().GetProperties())
                 {
-                    //if (prop.GetValue(dataVO, null) != null)
-                    //{
-                        pars[prop.Name] = prop.GetValue(dataVO, null);
-                        //Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(chiamata, null));
-                    //}
+                    pars[prop.Name] = prop.GetValue(dataVO, null);                       
                 }
 
                 string query = "INSERT INTO " + tabName + " (" +
@@ -329,7 +325,7 @@ namespace DataAccessLayer
                 log.Info(string.Format("Query: {0}", query));
                 log.Info(string.Format("Params: {0}", string.Join("; ", pars.Select(x => x.Key + "=" + x.Value).ToArray())));
 
-                result = DBSQL.ExecuteNonQueryWithParams(connectionString, query, pars);
+                result = ExecuteNonQueryWithParams(connectionString, query, pars);
 
                 log.Info(string.Format("Query Executed! Inserted {0} records!", result));
 
@@ -365,11 +361,7 @@ namespace DataAccessLayer
 
                 foreach (var prop in dataVO.GetType().GetProperties())
                 {
-                    //if (prop.GetValue(dataVO, null) != null)
-                    //{
-                        pars[prop.Name] = prop.GetValue(dataVO, null);
-                        //Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(chiamata, null));
-                    //}
+                    pars[prop.Name] = prop.GetValue(dataVO, null);
                 }
 
                 string query = "INSERT INTO " + tabName + " (" +
@@ -400,7 +392,7 @@ namespace DataAccessLayer
                     {                        
                         dataTable.Load(reader);
                     }
-                    log.Info(string.Format("Query Insert executed! Result count: {0}", dataTable.Rows.Count));
+                    log.Info(string.Format("Query Insert executed! Result count: {0}", LibString.ItemsNumber(dataTable)));
                                         
                     DataRow row = dataTable.Rows[0];
                     foreach (string k in pk)
@@ -408,7 +400,6 @@ namespace DataAccessLayer
                         if (row[k] != null)
                         {
                             pars_[k] = row[k];
-                            //Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(chiamata, null));
                         }
                     }
                     row = null;
@@ -425,11 +416,7 @@ namespace DataAccessLayer
 
                 data = ExecuteQueryWithParams(connectionString, query2, pars_);
                 
-                int num = 0;
-                if (data != null && data.Rows.Count > 0)
-                    num = data.Rows.Count;
-
-                log.Info(string.Format("Query Executed! Retrieved {0} records!", num));
+                log.Info(string.Format("Query Executed! Retrieved {0} records!", LibString.ItemsNumber(data)));
 
                 return data;
             }
@@ -504,7 +491,7 @@ namespace DataAccessLayer
                 log.Info(string.Format("Query: {0}", query));
                 log.Info(string.Format("Params: {0}", string.Join("; ", parss.Select(x => x.Key + "=" + x.Value).ToArray())));
 
-                result = DBSQL.ExecuteNonQueryWithParams(connectionString, query, parss);
+                result = ExecuteNonQueryWithParams(connectionString, query, parss);
 
                 log.Info(string.Format("Query Executed! Inserted {0} records!", result));
 
@@ -550,7 +537,6 @@ namespace DataAccessLayer
                         {
                             string keyOfPar = string.Format("{0}{1}", prop.Name, i);
                             pars[keyOfPar] = prop.GetValue(dataVO, null);
-                            //Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(chiamata, null));
                             if (i == 0)
                             {
                                 into[prop.Name] = prop.GetValue(dataVO, null);
@@ -586,11 +572,8 @@ namespace DataAccessLayer
                 {
                     foreach (KeyValuePair<string, object> entry in parss)
                     {
-                        //if (!autoincrement.Select(d => d.ToLower()).ToList().Contains(entry.Key.ToLower()))
-                        //{
-                            object dat = entry.Value != null ? entry.Value : DBNull.Value;
-                            cmd.Parameters.AddWithValue(entry.Key, dat);
-                        //}
+                        object dat = entry.Value != null ? entry.Value : DBNull.Value;
+                        cmd.Parameters.AddWithValue(entry.Key, dat);
                     }
                     log.Info(string.Format("Opening Connection on '{0}' ...", HidePwd(connectionString)));
                     connection.Open();
@@ -601,7 +584,7 @@ namespace DataAccessLayer
                     {
                         dataTable.Load(reader);
                     }
-                    log.Info(string.Format("Query Insert executed! Result count: {0}", dataTable.Rows.Count));
+                    log.Info(string.Format("Query Insert executed! Result count: {0}", LibString.ItemsNumber(dataTable)));
 
                     int t = 0;
                     foreach(DataRow row in dataTable.Rows)
@@ -612,7 +595,6 @@ namespace DataAccessLayer
                             if (row[k] != null)
                             {
                                 tmp[k + t.ToString()] = row[k];
-                                //Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(chiamata, null));
                             }
                         }
                         pars_.Add(tmp);
@@ -649,11 +631,7 @@ namespace DataAccessLayer
 
                 data = ExecuteQueryWithParams(connectionString, query2, pars2);
 
-                int num = 0;
-                if (data != null && data.Rows.Count > 0)
-                    num = data.Rows.Count;
-
-                log.Info(string.Format("Query Executed! Retrieved {0} records!", num));
+                log.Info(string.Format("Query Executed! Retrieved {0} records!", LibString.ItemsNumber(data)));
 
                 return data;
             }
@@ -690,7 +668,7 @@ namespace DataAccessLayer
                 log.Info(string.Format("Query: {0}", query));
                 log.Info(string.Format("Params: {0}", string.Join("; ", pars.Select(x => x.Key + "=" + x.Value).ToArray())));
 
-                result = DBSQL.ExecuteNonQueryWithParams(connectionString, query, pars);
+                result = ExecuteNonQueryWithParams(connectionString, query, pars);
 
                 log.Info(string.Format("Query Executed! Inserted {0} records!", result));
 
@@ -722,10 +700,7 @@ namespace DataAccessLayer
                 Dictionary<string, object> data = new Dictionary<string, object>();
                 foreach (var prop in dataVO.GetType().GetProperties())
                 {
-                    //if (prop.GetValue(dataVO, null) != null)
-                    //{
-                        data[prop.Name] = prop.GetValue(dataVO, null);
-                    //}
+                    data[prop.Name] = prop.GetValue(dataVO, null);
                 }
 
                 string query = "UPDATE " + tabName +
@@ -733,7 +708,6 @@ namespace DataAccessLayer
                     string.Join(", ", data.Select(x => x.Key + " = " + "@" + x.Key).ToArray()) +                    
                     " WHERE " +
                     string.Join(" ", conditions.Select(x => x.Value.Key + x.Value.Op + "@" + x.Key + " " + x.Value.Conj).ToArray());
-                //string.Join(" and ", conditions.Select(x => x.Key + x.Value.Op + "@" + x.Key).ToArray());
                 Dictionary<string, object> conditions_ = new Dictionary<string, object>();
                 foreach (KeyValuePair<string, QueryCondition> entry in conditions)
                 {
@@ -764,12 +738,6 @@ namespace DataAccessLayer
                 log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
             }            
         }
-
-
-
-
-
-
         static public int UpdateOperation(string connectionString, string tabName, object dataVO, Dictionary<string, QueryCondition> conditions, List<string> autoincrement = null)
         {
             Stopwatch tw = new Stopwatch();
@@ -781,20 +749,15 @@ namespace DataAccessLayer
             {
                 Dictionary<string, object> data = new Dictionary<string, object>();
                 foreach (var prop in dataVO.GetType().GetProperties())
-                {
-                    //if (prop.GetValue(dataVO, null) != null)
-                    //{
+                {                    
                     data[prop.Name] = prop.GetValue(dataVO, null);
-                    //}
                 }
 
                 string query = "UPDATE " + tabName +
                     " SET " +
-                    //string.Join(", ", data.Select(x => x.Key + " = " + "@" + x.Key).ToArray()) +
                     string.Join(", ", data.Where(l => !autoincrement.Select(d => d.ToLower()).ToList().Contains(l.Key.ToLower())).Select(x => x.Key + " = " + "@" + x.Key).ToArray()) +
                     " WHERE " +
                     string.Join(" ", conditions.Select(x => x.Value.Key + x.Value.Op + "@" + x.Key + " " + x.Value.Conj).ToArray());
-                //string.Join(" and ", conditions.Select(x => x.Key + x.Value.Op + "@" + x.Key).ToArray());
                 Dictionary<string, object> conditions_ = new Dictionary<string, object>();
                 foreach (KeyValuePair<string, QueryCondition> entry in conditions)
                 {
@@ -806,7 +769,7 @@ namespace DataAccessLayer
                 log.Info(string.Format("Query: {0}", query));
                 log.Info(string.Format("Params: {0}", string.Join("; ", pars.Select(x => x.Key + "=" + x.Value).ToArray())));
 
-                result = DBSQL.ExecuteNonQueryWithParams(connectionString, query, pars);
+                result = ExecuteNonQueryWithParams(connectionString, query, pars);
 
                 log.Info(string.Format("Query Executed! Inserted {0} records!", result));
 

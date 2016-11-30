@@ -38,23 +38,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    epis = EpisodioMapper.EpisMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", epis.GetType().ToString()));
-                }
-
-                log.Info(string.Format("Query Executed! Retrieved {0} records!", data.Rows.Count));
-
-                if (data != null && data.Rows.Count == 1)
-                {
-                    DataRow row = data.Rows[0];
-
-                    epis = EpisodioMapper.EpisMapper(row);
-                                        
-                    log.Info(string.Format("Record mapped to {0}", epis.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        epis = EpisodioMapper.EpisMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(epis), LibString.TypeName(epis)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -144,9 +135,12 @@ namespace DataAccessLayer
                 List<string> autoincrement = new List<string>() { "episIdiD" };
                 // INSERT NUOVA
                 DataTable res = DBSQL.InsertBackOperation(connectionString, table, data, pk, autoincrement);
-                if (res != null && res.Rows.Count > 0)
-                    result = EpisodioMapper.EpisMapper(res.Rows[0]);
-                log.Info(string.Format("Inserted new record with ID: {0}!", result.episidid));
+                if (res != null)
+                    if(res.Rows.Count > 0)
+                    {
+                        result = EpisodioMapper.EpisMapper(res.Rows[0]);
+                        log.Info(string.Format("Inserted new record with ID: {0}!", result.episidid));
+                    }                    
             }
             catch (Exception ex)
             {

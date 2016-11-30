@@ -8,7 +8,7 @@ namespace GeneralPurposeLib
 {
     public static class LibString
     {
-        public static string TimeSpanToTimeHmsms(TimeSpan ts)
+        static public string TimeSpanToTimeHmsms(TimeSpan ts)
         {
             string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
                 ts.Hours,
@@ -18,15 +18,14 @@ namespace GeneralPurposeLib
 
             return elapsedTime;
         }
-
         static public bool IsNumericType(this object o)
         {
             bool result = false;
             var type = Type.GetTypeCode(o.GetType());
             switch (type)
-            {                
+            {
                 case TypeCode.DateTime:
-                    result=false;
+                    result = false;
                     break;
                 case TypeCode.Byte:
                 case TypeCode.SByte:
@@ -39,15 +38,14 @@ namespace GeneralPurposeLib
                 case TypeCode.Decimal:
                 case TypeCode.Double:
                 case TypeCode.Single:
-                    result=true;
+                    result = true;
                     break;
                 default:
-                    result=false;
+                    result = false;
                     break;
             }
             return result;
         }
-
         static public string SQLCommand2String(SqlCommand cmd)
         {
             string result = "";
@@ -61,7 +59,6 @@ namespace GeneralPurposeLib
             }
             return result;
         }
-
         static private string SQLCommandQuery2String(SqlCommand cmd)
         {
             string result = "";
@@ -73,12 +70,11 @@ namespace GeneralPurposeLib
                 if (p.Value != DBNull.Value && p.Value != null)
                     val_ = p.Value.IsNumericType() ? p.Value.ToString() : string.Format("'{0}'", p.Value.ToString());
                 string par_ = "@" + p.ParameterName;
-                
-                result = ReplaceFirstOccurrance(result, par_, val_);                
+
+                result = ReplaceFirstOccurrance(result, par_, val_);
             }
             return result;
         }
-
         static private string SQLCommandSP2String(SqlCommand cmd)
         {
             string result = "";
@@ -97,8 +93,7 @@ namespace GeneralPurposeLib
             }
             return result;
         }
-
-        public static string ReplaceFirstOccurrance(string original, string oldValue, string newValue)
+        static public string ReplaceFirstOccurrance(string original, string oldValue, string newValue)
         {
             if (string.IsNullOrEmpty(original))
                 return string.Empty;
@@ -111,8 +106,7 @@ namespace GeneralPurposeLib
                 return original;
             return original.Remove(loc, oldValue.Length).Insert(loc, newValue);
         }
-
-        public static string XML2String(XmlDocument xmlDoc)
+        static public string XML2String(XmlDocument xmlDoc)
         {
             using (var stringWriter = new StringWriter())
             using (var xmlTextWriter = XmlWriter.Create(stringWriter))
@@ -122,8 +116,7 @@ namespace GeneralPurposeLib
                 return stringWriter.GetStringBuilder().ToString();
             }
         }
-
-        public static List<string> GetAllValuesSegments(string data, string value)
+        static public List<string> GetAllValuesSegments(string data, string value)
         {
             List<string> res = null;
 
@@ -152,5 +145,47 @@ namespace GeneralPurposeLib
 
             return res;
         }
+        static public string TypeName<T>(T obj)
+        {
+            return typeof(T).Name;
+        }
+        static public string TypeName(object obj)
+        {
+            if (obj != null)
+            {
+                return obj.GetType().Name;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        static public int ItemsNumber<T>(T obj)
+        {
+            int res = 0;
+
+            if (obj != null)
+            {
+                if(typeof(T).GetInterface("IEnumerable") != null)
+                {
+                    int c = 0;
+                    System.Collections.IEnumerator e = ((System.Collections.IEnumerable)obj).GetEnumerator();
+                    while (e.MoveNext())
+                        c++;                    
+                    res = c;
+                }
+                else
+                {
+                    res = 1;
+                }
+                if(typeof(T) == typeof(System.Data.DataTable))
+                {
+                    System.Data.DataTable dt = obj as System.Data.DataTable;
+                    res = dt.Rows.Count;
+                }
+            }               
+
+            return res;
+        }        
     }
 }

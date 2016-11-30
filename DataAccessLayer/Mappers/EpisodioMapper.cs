@@ -36,7 +36,6 @@ namespace DataAccessLayer.Mappers
             epis.episdataintens = row["EPISDATAINTENS"] != DBNull.Value ? (DateTime)row["EPISDATAINTENS"] : (DateTime?)null;
             epis.episutenintes = row["EPISUTENINTES"] != DBNull.Value ? (string)row["EPISUTENINTES"] : null;
 
-
             return epis;
         }
         

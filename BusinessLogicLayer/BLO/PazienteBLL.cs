@@ -18,9 +18,9 @@ namespace BusinessLogicLayer
 
             try
             {
-                IDAL.VO.PazienteVO dalRes = this.dal.GetPazienteById(id);
-                pazi = PazienteMapper.PaziMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", pazi.GetType().ToString()));
+                IDAL.VO.PazienteVO pazi_ = this.dal.GetPazienteById(id);
+                pazi = PazienteMapper.PaziMapper(pazi_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(pazi), LibString.TypeName(pazi_), LibString.TypeName(pazi)));
             }
             catch (Exception ex)
             {

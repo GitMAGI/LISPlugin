@@ -38,12 +38,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;                
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    anal = AnalisiMapper.AnalMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", anal.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        anal = AnalisiMapper.AnalMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(anal), LibString.TypeName(anal)));
+                    }                    
                 }               
             }
             catch (Exception ex)
@@ -91,12 +93,14 @@ namespace DataAccessLayer
                 }
 
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    anals = AnalisiMapper.AnalMapper(data);
-                    log.Info(string.Format("{0} Records mapped to {1}", anals.Count, anals.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        anals = AnalisiMapper.AnalMapper(data);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(anals), LibString.TypeName(anals)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -141,12 +145,11 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data == null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
                 if (data != null)
                 {
                     anals = AnalisiMapper.AnalMapper(data);
-                    log.Info(string.Format("{0} Records mapped to {1}", anals.Count, anals.GetType().ToString()));
+                    log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(anals), LibString.TypeName(anals)));
                 }
             }
             catch (Exception ex)
@@ -238,9 +241,12 @@ namespace DataAccessLayer
                 List<string> autoincrement = new List<string>() { "aNalIdiD" };
                 // INSERT NUOVA
                 DataTable res = DBSQL.InsertBackOperation(connectionString, table, data, pk, autoincrement);
-                if (res != null && res.Rows.Count > 0)
-                    result = AnalisiMapper.AnalMapper(res.Rows[0]);
-                log.Info(string.Format("Inserted new record with ID: {0}!", result.analidid));                
+                if (res != null)
+                    if(res.Rows.Count > 0)
+                    {
+                        result = AnalisiMapper.AnalMapper(res.Rows[0]);
+                        log.Info(string.Format("Inserted new record with ID: {0}!", result.analidid));
+                    }                    
             }
             catch (Exception ex)
             {
@@ -278,18 +284,21 @@ namespace DataAccessLayer
                 {
                     results = AnalisiMapper.AnalMapper(res);
                 }                
-                if(results!=null && results.Count > 0)
+                if(results!=null)
                 {
-                    string tmp = "";
-                    int o = 0;
-                    foreach(IDAL.VO.AnalisiVO tmp_ in results)
+                    if (results.Count > 0)
                     {
-                        tmp += tmp_.analidid.Value.ToString();
-                        if (o < results.Count - 1)
-                            tmp += ", ";
-                        o++;
+                        string tmp = "";
+                        int o = 0;
+                        foreach (IDAL.VO.AnalisiVO tmp_ in results)
+                        {
+                            tmp += tmp_.analidid.Value.ToString();
+                            if (o < results.Count - 1)
+                                tmp += ", ";
+                            o++;
+                        }
+                        log.Info(string.Format("Inserted {0} new records with IDs: {1}!", LibString.ItemsNumber(results), tmp));
                     }
-                    log.Info(string.Format("Inserted new records with IDs: {0}!", tmp));
                 }
                 else
                 {

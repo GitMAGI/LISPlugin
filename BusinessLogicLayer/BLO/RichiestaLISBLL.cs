@@ -20,9 +20,9 @@ namespace BusinessLogicLayer
 
             try
             {
-                List<IDAL.VO.RichiestaLISVO> dalRes = this.dal.GetRichiesteByEven(evenid);
-                richs = RichiestaLISMapper.RichMapper(dalRes);
-                log.Info(string.Format("{0} VO mapped to {1}", richs.Count, richs.First().GetType().ToString()));
+                List<IDAL.VO.RichiestaLISVO> richs_ = this.dal.GetRichiesteByEven(evenid);
+                richs = RichiestaLISMapper.RichMapper(richs_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(richs), LibString.TypeName(richs_), LibString.TypeName(richs)));
             }
             catch (Exception ex)
             {
@@ -47,9 +47,9 @@ namespace BusinessLogicLayer
 
             try
             {
-                IDAL.VO.RichiestaLISVO dalRes = this.dal.GetRichiestaById(richidid);
-                rich = RichiestaLISMapper.RichMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", rich.GetType().ToString()));
+                IDAL.VO.RichiestaLISVO rich_ = this.dal.GetRichiestaById(richidid);
+                rich = RichiestaLISMapper.RichMapper(rich_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(rich), LibString.TypeName(rich_), LibString.TypeName(rich)));
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace BusinessLogicLayer
 
             return rich;
         }
-        public IBLL.DTO.RichiestaLISDTO AddRichiestaLIS(IBLL.DTO.RichiestaLISDTO esam)
+        public IBLL.DTO.RichiestaLISDTO AddRichiestaLIS(IBLL.DTO.RichiestaLISDTO data)
         {
             Stopwatch tw = new Stopwatch();
             tw.Start();
@@ -74,12 +74,13 @@ namespace BusinessLogicLayer
 
             try
             {
-                esam.esamidid = null;
-                IDAL.VO.RichiestaLISVO data_ = RichiestaLISMapper.RichMapper(esam);
-                log.Info(string.Format("1 {0} mapped to {1}", esam.GetType().ToString(), data_.GetType().ToString()));
+                data.esamidid = null;
+                IDAL.VO.RichiestaLISVO data_ = RichiestaLISMapper.RichMapper(data);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
                 IDAL.VO.RichiestaLISVO stored = dal.NewRichiesta(data_);
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
                 toReturn = RichiestaLISMapper.RichMapper(stored);
-                log.Info(string.Format("1 {0} mapped to {1}", stored.GetType().ToString(), toReturn.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -93,16 +94,16 @@ namespace BusinessLogicLayer
 
             return toReturn;
         }
-        public IBLL.DTO.RichiestaLISDTO UpdateRichiestaLIS(IBLL.DTO.RichiestaLISDTO esam)
+        public IBLL.DTO.RichiestaLISDTO UpdateRichiestaLIS(IBLL.DTO.RichiestaLISDTO data)
         {
             Stopwatch tw = new Stopwatch();
             tw.Start();
 
             log.Info(string.Format("Starting ..."));
 
-            int result = 0;
+            int stored = 0;
             IBLL.DTO.RichiestaLISDTO toReturn = null;
-            string id = esam.esamidid.ToString();
+            string id = data.esamidid.ToString();
 
             try
             {
@@ -113,10 +114,11 @@ namespace BusinessLogicLayer
                     log.Error(msg);
                     return null;
                 }
-                IDAL.VO.RichiestaLISVO data_ = RichiestaLISMapper.RichMapper(esam);
-                log.Info(string.Format("1 {0} mapped to {1}", esam.GetType().ToString(), data_.GetType().ToString()));
-                result = dal.SetRichiesta(data_);
+                IDAL.VO.RichiestaLISVO data_ = RichiestaLISMapper.RichMapper(data);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
+                stored = dal.SetRichiesta(data_);
                 toReturn = GetRichiestaLISById(id);
+                log.Info(string.Format("{0} {1} items added and {2} {3} retrieved back!", stored, LibString.TypeName(data_), LibString.ItemsNumber(toReturn), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -142,6 +144,7 @@ namespace BusinessLogicLayer
             try
             {
                 result = dal.DeleteRichiestaById(esamidid);
+                log.Info(string.Format("{0} items Deleted!", result));
             }
             catch (Exception ex)
             {

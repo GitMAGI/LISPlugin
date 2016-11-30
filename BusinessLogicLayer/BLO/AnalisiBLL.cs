@@ -21,7 +21,7 @@ namespace BusinessLogicLayer
             {
                 List<IDAL.VO.AnalisiVO> dalRes = dal.GetAnalisisByRichiesta(richidid);
                 anals = AnalisiMapper.AnalMapper(dalRes);
-                log.Info(string.Format("{0} VOs mapped to {0}", anals.Count, anals.GetType().ToString()));
+                log.Info(string.Format("{0} VOs mapped to {1}", LibString.ItemsNumber(anals), LibString.TypeName(anals)));
             }
             catch (Exception ex)
             {
@@ -48,7 +48,7 @@ namespace BusinessLogicLayer
             {
                 IDAL.VO.AnalisiVO dalRes = this.dal.GetAnalisiById(analidid);
                 anal = AnalisiMapper.AnalMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", anal.GetType().ToString()));
+                log.Info(string.Format("{0} VOs mapped to {1}", LibString.ItemsNumber(anal), LibString.TypeName(anal)));
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace BusinessLogicLayer
             {
                 List<IDAL.VO.AnalisiVO> anals_ = dal.GetAnalisisByIds(analidids);
                 anals = AnalisiMapper.AnalMapper(anals_);
-                log.Info(string.Format("{0} {1} mapped to {2}", anals.Count, anals_.GetType().ToString(), anals.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(anals), LibString.TypeName(anals_), LibString.TypeName(anals)));
             }
             catch (Exception ex)
             {
@@ -96,14 +96,16 @@ namespace BusinessLogicLayer
 
             log.Info(string.Format("Starting ..."));
 
+            int stored = 0;
             IBLL.DTO.AnalisiDTO toReturn = null;
 
             try
             {
                 IDAL.VO.AnalisiVO data_ = AnalisiMapper.AnalMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));                
-                int stored = dal.SetAnalisi(data_);
-                toReturn = GetAnalisiById(data.analidid.ToString());                
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));                
+                stored = dal.SetAnalisi(data_);                
+                toReturn = GetAnalisiById(data.analidid.ToString());
+                log.Info(string.Format("{0} {1} items added and {2} {3} retrieved back!", stored, LibString.TypeName(data_), LibString.ItemsNumber(toReturn), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -130,9 +132,11 @@ namespace BusinessLogicLayer
             {
                 data.analidid = null;
                 IDAL.VO.AnalisiVO data_ = AnalisiMapper.AnalMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));                
                 IDAL.VO.AnalisiVO stored = dal.NewAnalisi(data_);
-                log.Info(string.Format("1 {0} mapped to {1}", stored.GetType().ToString(), toReturn.GetType().ToString()));
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
+                toReturn = AnalisiMapper.AnalMapper(stored);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -153,16 +157,17 @@ namespace BusinessLogicLayer
 
             log.Info(string.Format("Starting ..."));
 
-            List<IBLL.DTO.AnalisiDTO> anals = null;
+            List<IBLL.DTO.AnalisiDTO> toReturn = null;
 
             try
             {
                 data.ForEach(p => p.analidid = null);
                 List<IDAL.VO.AnalisiVO> data_ = AnalisiMapper.AnalMapper(data);
-                log.Info(string.Format("{0} {1} mapped to {2}", data_.Count, data.GetType().ToString(), data_.GetType().ToString()));
-                List<IDAL.VO.AnalisiVO> labes_ = dal.NewAnalisi(data_);
-                anals = AnalisiMapper.AnalMapper(labes_);
-                log.Info(string.Format("{0} {1} mapped to {2}", anals.Count, labes_.GetType().ToString(), anals.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));
+                List<IDAL.VO.AnalisiVO> stored = dal.NewAnalisi(data_);
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
+                toReturn = AnalisiMapper.AnalMapper(stored);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -174,7 +179,7 @@ namespace BusinessLogicLayer
             tw.Stop();
             log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
 
-            return anals;
+            return toReturn;
         }
         public int DeleteAnalisiById(string analidid)
         {
@@ -188,6 +193,7 @@ namespace BusinessLogicLayer
             try
             {
                 result = dal.DeleteAnalisiById(analidid);
+                log.Info(string.Format("{0} items Deleted!", result));
             }
             catch (Exception ex)
             {
@@ -213,6 +219,7 @@ namespace BusinessLogicLayer
             try
             {
                 result = dal.DeleteAnalisiById(richidid);
+                log.Info(string.Format("{0} items Deleted!", result));
             }
             catch (Exception ex)
             {

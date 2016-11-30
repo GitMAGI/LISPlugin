@@ -35,8 +35,18 @@ namespace DataAccessLayer
                     log.Info("Mirth client instatiated! Endpoint Info -> " + clientInfo);
 
                     log.Info("Querying the client ...");
-                    result = client.acceptMessage(xmlreq);
-                    log.Info("Response got!");
+                    try
+                    {
+                        result = client.acceptMessage(xmlreq);
+                        log.Info("Response got!");
+                    }
+                    catch(Exception ex)
+                    {
+                        result = null;
+                        string err = "Error during the communication to the MIRTH. No response got!";
+                        log.Info(err);
+                        log.Error(err + " Exception detected: " + ex.Message);
+                    }                    
                 }
             }
             catch (Exception ex)

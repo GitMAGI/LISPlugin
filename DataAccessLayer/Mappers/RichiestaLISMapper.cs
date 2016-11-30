@@ -4,7 +4,7 @@ using System.Data;
 
 namespace DataAccessLayer.Mappers
 {
-    public class RichiestaRISMapper
+    public class RichiestaLISMapper
     {
         private static readonly log4net.ILog log =
            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

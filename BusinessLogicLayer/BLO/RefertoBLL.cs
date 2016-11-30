@@ -1,7 +1,6 @@
 ﻿using BusinessLogicLayer.Mappers;
 using GeneralPurposeLib;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace BusinessLogicLayer
@@ -16,12 +15,13 @@ namespace BusinessLogicLayer
             log.Info(string.Format("Starting ..."));
 
             IBLL.DTO.RefertoDTO refe = null;
+            string ttype = refe.GetType().ToString();
 
             try
             {
-                IDAL.VO.RefertoVO dalRes = this.dal.GetRefertoByEsamId(id);
-                refe = RefertoMapper.RefeMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", refe.GetType().ToString()));
+                IDAL.VO.RefertoVO refe_ = this.dal.GetRefertoByEsamId(id);
+                refe = RefertoMapper.RefeMapper(refe_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(refe), LibString.TypeName(refe_), LibString.TypeName(refe)));
             }
             catch (Exception ex)
             {
@@ -46,9 +46,9 @@ namespace BusinessLogicLayer
 
             try
             {
-                IDAL.VO.RefertoVO dalRes = this.dal.GetRefertoById(id);
-                refe = RefertoMapper.RefeMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", refe.GetType().ToString()));
+                IDAL.VO.RefertoVO refe_ = this.dal.GetRefertoById(id);
+                refe = RefertoMapper.RefeMapper(refe_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(refe), LibString.TypeName(refe_), LibString.TypeName(refe)));
             }
             catch (Exception ex)
             {

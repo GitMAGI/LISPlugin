@@ -35,13 +35,15 @@ namespace DataAccessLayer
                         }
                     }
                 };
-                DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);                
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    ris = Mappers.RisultatoMapper.AnreMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", ris.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        ris = Mappers.RisultatoMapper.AnreMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(ris), LibString.TypeName(ris)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -70,7 +72,7 @@ namespace DataAccessLayer
             {
                 string connectionString = this.GRConnectionString;
 
-                string table = this.RisultatoGrezzoTabName;
+                string table = this.RisultatoTabName;
 
                 Dictionary<string, DBSQL.QueryCondition> conditions = new Dictionary<string, DBSQL.QueryCondition>()
                 {
@@ -85,12 +87,11 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
                 if (data != null)
                 {
                     riss = Mappers.RisultatoMapper.AnreMapper(data);
-                    log.Info(string.Format("Record mapped to {0}", riss.GetType().ToString()));
+                    log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(riss), LibString.TypeName(riss)));
                 }
             }
             catch (Exception ex)
@@ -126,9 +127,12 @@ namespace DataAccessLayer
                 List<string> autoincrement = new List<string>() { "anreIdiD" };
                 // INSERT NUOVA
                 DataTable res = DBSQL.InsertBackOperation(connectionString, table, data, pk, autoincrement);
-                if (res != null && res.Rows.Count > 0)
-                    result = Mappers.RisultatoMapper.AnreMapper(res.Rows[0]);
-                log.Info(string.Format("Inserted new record with ID: {0}!", result.anreidid));
+                if (res != null)
+                    if (res.Rows.Count > 0)
+                    {
+                        result = Mappers.RisultatoMapper.AnreMapper(res.Rows[0]);
+                        log.Info(string.Format("Inserted new record with ID: {0}!", result.anreidid));
+                    }                    
             }
             catch (Exception ex)
             {
@@ -166,18 +170,21 @@ namespace DataAccessLayer
                 {
                     results = Mappers.RisultatoMapper.AnreMapper(res);
                 }
-                if (results != null && results.Count > 0)
+                if (results != null)
                 {
-                    string tmp = "";
-                    int o = 0;
-                    foreach (IDAL.VO.RisultatoVO tmp_ in results)
+                    if (results.Count > 0)
                     {
-                        tmp += tmp_.anreidid.Value.ToString();
-                        if (o < results.Count - 1)
-                            tmp += ", ";
-                        o++;
-                    }
-                    log.Info(string.Format("Inserted new records with IDs: {0}!", tmp));
+                        string tmp = "";
+                        int o = 0;
+                        foreach (IDAL.VO.RisultatoVO tmp_ in results)
+                        {
+                            tmp += tmp_.anreidid.Value.ToString();
+                            if (o < results.Count - 1)
+                                tmp += ", ";
+                            o++;
+                        }
+                        log.Info(string.Format("Inserted {0} new records with IDs: {1}!", LibString.ItemsNumber(results), tmp));
+                    }                    
                 }
                 else
                 {

@@ -36,12 +36,14 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
-                if (data != null && data.Rows.Count == 1)
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
                 {
-                    rich = RichiestaRISMapper.RichMapper(data.Rows[0]);
-                    log.Info(string.Format("Record mapped to {0}", rich.GetType().ToString()));
+                    if (data.Rows.Count == 1)
+                    {
+                        rich = RichiestaLISMapper.RichMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(rich), LibString.TypeName(rich)));
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -87,13 +89,12 @@ namespace DataAccessLayer
                     }
                 };
                 DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
-                int count = data != null ? 0 : data.Rows.Count;
-                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", count));
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
                 if (data != null)
                 {
-                    richs = RichiestaRISMapper.RichMapper(data); 
-                    if(richs!=null && richs.Count>0)                                       
-                        log.Info(string.Format("{0} Records mapped to {1}", richs.Count, richs[0].GetType().ToString()));
+                    richs = RichiestaLISMapper.RichMapper(data); 
+                    if(richs!=null && richs.Count>0)
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(richs), LibString.TypeName(richs)));
                 }
             }
             catch (Exception ex)
@@ -184,9 +185,12 @@ namespace DataAccessLayer
                 List<string> autoincrement = new List<string>() { "eSamIdiD" };
                 // INSERT NUOVA
                 DataTable res = DBSQL.InsertBackOperation(connectionString, table, data, pk, autoincrement);
-                if (res != null && res.Rows.Count > 0)
-                    result = RichiestaRISMapper.RichMapper(res.Rows[0]);
-                log.Info(string.Format("Inserted new record with ID: {0}!", result.esamidid));
+                if (res != null)
+                    if (res.Rows.Count > 0)
+                    {
+                        result = RichiestaLISMapper.RichMapper(res.Rows[0]);
+                        log.Info(string.Format("Inserted new record with ID: {0}!", result.esamidid));
+                    }                    
             }
             catch (Exception ex)
             {

@@ -20,7 +20,7 @@ namespace BusinessLogicLayer
             {
                 IDAL.VO.EpisodioVO dalRes = this.dal.GetEpisodioById(id);
                 epis = EpisodioMapper.EpisMapper(dalRes);
-                log.Info(string.Format("1 VO mapped to {0}", epis.GetType().ToString()));
+                log.Info(string.Format("{0} VOs mapped to {1}", LibString.ItemsNumber(epis), LibString.TypeName(epis)));
             }
             catch (Exception ex)
             {
@@ -47,9 +47,11 @@ namespace BusinessLogicLayer
             {
                 data.episidid = null;
                 IDAL.VO.EpisodioVO data_ = EpisodioMapper.EpisMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));                
                 IDAL.VO.EpisodioVO stored = dal.NewEpisodio(data_);
-                log.Info(string.Format("1 {0} mapped to {1}", stored.GetType().ToString(), toReturn.GetType().ToString()));
+                log.Info(string.Format("{0} {1} items added and got back!", LibString.ItemsNumber(stored), LibString.TypeName(stored)));
+                toReturn = EpisodioMapper.EpisMapper(stored);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(toReturn), LibString.TypeName(stored), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {
@@ -70,7 +72,7 @@ namespace BusinessLogicLayer
 
             log.Info(string.Format("Starting ..."));
 
-            int result = 0;
+            int stored = 0;
             IBLL.DTO.EpisodioDTO toReturn = null;
             string id = data.episidid.ToString();
 
@@ -84,9 +86,10 @@ namespace BusinessLogicLayer
                     return null;
                 }
                 IDAL.VO.EpisodioVO data_ = EpisodioMapper.EpisMapper(data);
-                log.Info(string.Format("1 {0} mapped to {1}", data.GetType().ToString(), data_.GetType().ToString()));
-                result = dal.SetEpisodio(data_);
+                log.Info(string.Format("{0} {1} mapped to {2}", LibString.ItemsNumber(data_), LibString.TypeName(data), LibString.TypeName(data_)));                
+                stored = dal.SetEpisodio(data_);
                 toReturn = GetEpisodioById(id);
+                log.Info(string.Format("{0} {1} items added and {2} {3} retrieved back!", stored, LibString.TypeName(data_), LibString.ItemsNumber(toReturn), LibString.TypeName(toReturn)));
             }
             catch (Exception ex)
             {

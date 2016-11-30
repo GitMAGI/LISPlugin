@@ -61,7 +61,6 @@ namespace DataAccessLayer.Mappers
             pazi.pazidistr = row["pazidistr"] != DBNull.Value ? (string)row["pazidistr"] : null;
             pazi.paziaslcode = row["paziaslcode"] != DBNull.Value ? (string)row["paziaslcode"] : null;
 
-
             return pazi;
         }
     }

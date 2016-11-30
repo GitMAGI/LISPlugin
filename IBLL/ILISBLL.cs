@@ -40,8 +40,14 @@ namespace IBLL
         List<DTO.RisultatoDTO> GetRisultatiByAnalId(string id);
         List<DTO.RisultatoDTO> AddRisultati(List<DTO.RisultatoDTO> data);
 
-        string ScheduleNewRequest(DTO.RichiestaLISDTO esam, List<DTO.AnalisiDTO> anals, ref string errorString);
-        DTO.MirthResponseDTO SubmitNewRequest(string richid, ref string errorString);
+        DTO.MirthResponseDTO ORLParser(string raw);
+        string SendMirthRequest(string richidid);
+        List<DTO.LabelDTO> StoreLabels(List<DTO.LabelDTO> labes);
+        int ChangeHL7StatusAndMessageAll(string richidid, string hl7_stato, string hl7_msg = null);
+        List<DTO.AnalisiDTO> ChangeHL7StatusAndMessageAnalisis(List<string> analidids, string hl7_stato, string hl7_msg = null);
+        DTO.RichiestaLISDTO ChangeHL7StatusAndMessageRichiestaLIS(string richidid, string hl7_stato, string hl7_msg = null);
+        bool ValidateEsam(DTO.RichiestaLISDTO esam, ref string errorString);
+        bool ValidateAnals(List<DTO.AnalisiDTO> anals, ref string errorString);
 
         DTO.RefertoDTO GetRefertoByEsamId(string id);
         DTO.RefertoDTO GetRefertoById(string id);
