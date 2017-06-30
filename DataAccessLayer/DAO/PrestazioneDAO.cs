@@ -8,29 +8,29 @@ using DataAccessLayer.Mappers;
 namespace DataAccessLayer
 {
     public partial class LISDAL
-    {
-        public IDAL.VO.PazienteVO GetPazienteById(string pazidid)
+    {        
+        public IDAL.VO.PrestazioneVO GetPrestazioneById(string presidid)
         {
             Stopwatch tw = new Stopwatch();
             tw.Start();
 
             log.Info(string.Format("Starting ..."));
 
-            IDAL.VO.PazienteVO pazi = null;
-
+            IDAL.VO.PrestazioneVO pres = null;
             try
             {
                 string connectionString = this.GRConnectionString;
-                string table = this.PazienteTabName;
+                                
+                string table = this.PrestazioneTabName;
 
                 Dictionary<string, DBSQL.QueryCondition> conditions = new Dictionary<string, DBSQL.QueryCondition>()
                 {
                     {
                         "id",
                         new DBSQL.QueryCondition() {
-                            Key = "PAZIIDID",
+                            Key = "presidid",
                             Op = DBSQL.Op.Equal,
-                            Value = pazidid,
+                            Value = presidid,
                             Conj = DBSQL.Conj.None
                         }
                     }
@@ -41,13 +41,14 @@ namespace DataAccessLayer
                 {
                     if (data.Rows.Count == 1)
                     {
-                        pazi = PazienteMapper.PaziMapper(data.Rows[0]);
-                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(pazi), LibString.TypeName(pazi)));
+                        pres = PrestazioneMapper.PresMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(pres), LibString.TypeName(pres)));
                     }                    
                 }
             }
             catch (Exception ex)
             {
+                log.Info(string.Format("DBSQL Query Executed! Retrieved 0 record!"));
                 string msg = "An Error occured! Exception detected!";
                 log.Info(msg);
                 log.Error(msg + "\n" + ex.Message);
@@ -57,9 +58,61 @@ namespace DataAccessLayer
 
             log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
 
-            return pazi;
+            return pres;
         }
-        public int SetPaziente(IDAL.VO.PazienteVO data)
+        public IDAL.VO.PrestazioneVO GetPrestazioneByEvento(string evenidid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            IDAL.VO.PrestazioneVO pres = null;
+            try
+            {
+                string connectionString = this.GRConnectionString;
+
+                string table = this.PrestazioneTabName;
+
+                Dictionary<string, DBSQL.QueryCondition> conditions = new Dictionary<string, DBSQL.QueryCondition>()
+                {
+                    {
+                        "id",
+                        new DBSQL.QueryCondition() {
+                            Key = "preseven",
+                            Op = DBSQL.Op.Equal,
+                            Value = evenidid,
+                            Conj = DBSQL.Conj.None
+                        }
+                    }
+                };
+                DataTable data = DBSQL.SelectOperation(connectionString, table, conditions);
+                log.Info(string.Format("DBSQL Query Executed! Retrieved {0} record!", LibString.ItemsNumber(data)));
+                if (data != null)
+                {
+                    if (data.Rows.Count == 1)
+                    {
+                        pres = PrestazioneMapper.PresMapper(data.Rows[0]);
+                        log.Info(string.Format("{0} Records mapped to {1}", LibString.ItemsNumber(pres), LibString.TypeName(pres)));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Info(string.Format("DBSQL Query Executed! Retrieved 0 record!"));
+                string msg = "An Error occured! Exception detected!";
+                log.Info(msg);
+                log.Error(msg + "\n" + ex.Message);
+            }
+
+            tw.Stop();
+
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return pres;
+        }
+
+        public int SetPrestazione(IDAL.VO.PrestazioneVO data)
         {
             int result = 0;
 
@@ -68,15 +121,15 @@ namespace DataAccessLayer
 
             log.Info(string.Format("Starting ..."));
 
-            string table = this.PazienteTabName;
+            string table = this.PrestazioneTabName;
 
             try
             {
                 string connectionString = this.GRConnectionString;
-                string paziidid = data.paziidid.HasValue ? data.paziidid.Value.ToString() : null;
-                List<string> autoincrement = new List<string>() { "paziidid" };
+                string presidid = data.presidid.HasValue ? data.presidid.Value.ToString() : null;
+                List<string> autoincrement = new List<string>() { "presidid" };
 
-                if (paziidid == null)
+                if (presidid == null)
                 {
                     // INSERT NUOVA
                     result = DBSQL.InsertOperation(connectionString, table, data, autoincrement);
@@ -90,14 +143,14 @@ namespace DataAccessLayer
                         { "id",
                             new DBSQL.QueryCondition()
                             {
-                                Key = "PAZIIDID",
-                                Value = paziidid,
+                                Key = "presidid",
+                                Value = presidid,
                                 Op = DBSQL.Op.Equal,
                                 Conj = DBSQL.Conj.None,
                             }
                         },
                     };
-                    result = DBSQL.UpdateOperation(connectionString, table, data, conditions);
+                    result = DBSQL.UpdateOperation(connectionString, table, data, conditions, new List<string>() { "presidid" });
                     log.Info(string.Format("Updated {0} records!", result));
                 }
             }
@@ -114,30 +167,30 @@ namespace DataAccessLayer
 
             return result;
         }
-        public IDAL.VO.PazienteVO NewPaziente(IDAL.VO.PazienteVO data)
+        public IDAL.VO.PrestazioneVO NewPrestazione(IDAL.VO.PrestazioneVO data)
         {
-            IDAL.VO.PazienteVO result = null;
+            IDAL.VO.PrestazioneVO result = null;
 
             Stopwatch tw = new Stopwatch();
             tw.Start();
 
             log.Info(string.Format("Starting ..."));
 
-            string table = this.AnalisiTabName;
+            string table = this.PrestazioneTabName;
 
             try
             {
                 string connectionString = this.GRConnectionString;
 
-                List<string> pk = new List<string>() { "PAZIIDID" };
-                List<string> autoincrement = new List<string>() { "PaZiIdiD" };
+                List<string> pk = new List<string>() { "PRESIDID" };
+                List<string> autoincrement = new List<string>() { "pResIdiD" };
                 // INSERT NUOVA
                 DataTable res = DBSQL.InsertBackOperation(connectionString, table, data, pk, autoincrement);
                 if (res != null)
                     if (res.Rows.Count > 0)
                     {
-                        result = PazienteMapper.PaziMapper(res.Rows[0]);
-                        log.Info(string.Format("Inserted new record with ID: {0}!", result.paziidid));
+                        result = PrestazioneMapper.PresMapper(res.Rows[0]);
+                        log.Info(string.Format("Inserted new record with ID: {0}!", result.presidid));
                     }                    
             }
             catch (Exception ex)
@@ -153,7 +206,7 @@ namespace DataAccessLayer
 
             return result;
         }
-        public int DeletePazienteById(string pazidid)
+        public int DeletePrestazioneById(string presidid)
         {
             int result = 0;
 
@@ -162,21 +215,21 @@ namespace DataAccessLayer
 
             log.Info(string.Format("Starting ..."));
 
-            string table = this.PazienteTabName;
+            string table = this.PrestazioneTabName;
 
             try
             {
                 string connectionString = this.GRConnectionString;
 
-                long pazidid_ = long.Parse(pazidid);
+                long presidid_ = long.Parse(presidid);
                 // UPDATE
                 Dictionary<string, DBSQL.QueryCondition> conditions = new Dictionary<string, DBSQL.QueryCondition>()
                     {
                         { "id",
                             new DBSQL.QueryCondition()
                             {
-                                Key = "pazidid",
-                                Value = pazidid_,
+                                Key = "presidid",
+                                Value = presidid_,
                                 Op = DBSQL.Op.Equal,
                                 Conj = DBSQL.Conj.None,
                             }

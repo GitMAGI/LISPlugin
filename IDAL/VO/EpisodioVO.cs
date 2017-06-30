@@ -6,7 +6,7 @@ namespace IDAL.VO
     {
         public int? episidid { get; set; }
         public int? epispazi { get; set; }
-        public int? epistipo { get; set; }
+        public short? epistipo { get; set; }
         public DateTime? episdain { get; set; }
         public DateTime? episdafi { get; set; }
         public bool? epischiu { get; set; }

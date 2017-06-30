@@ -28,7 +28,6 @@ namespace BusinessLogicLayer.Mappers
 
             return esam;
         }
-
         public static List<IBLL.DTO.AnalisiDTO> AnalMapper(List<IDAL.VO.AnalisiVO> raws)
         {
             List<IBLL.DTO.AnalisiDTO> res = null;
@@ -44,7 +43,6 @@ namespace BusinessLogicLayer.Mappers
 
             return res;
         }
-
         public static IDAL.VO.AnalisiVO AnalMapper(IBLL.DTO.AnalisiDTO data)
         {
             IDAL.VO.AnalisiVO esam = null;
@@ -65,7 +63,6 @@ namespace BusinessLogicLayer.Mappers
 
             return esam;
         }
-
         public static List<IDAL.VO.AnalisiVO> AnalMapper(List<IBLL.DTO.AnalisiDTO> dtos)
         {
             List<IDAL.VO.AnalisiVO> res = null;

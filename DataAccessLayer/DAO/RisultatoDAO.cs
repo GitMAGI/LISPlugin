@@ -204,5 +204,49 @@ namespace DataAccessLayer
 
             return results;
         }
+        public int DeleteRisultatiByAnalisi(string analId)
+        {
+            int result = 0;
+
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            string table = this.RisultatoTabName;
+
+            try
+            {
+                string connectionString = this.GRConnectionString;
+
+                // DELETE
+                Dictionary<string, DBSQL.QueryCondition> conditions = new Dictionary<string, DBSQL.QueryCondition>()
+                    {
+                        { "id",
+                            new DBSQL.QueryCondition()
+                            {
+                                Key = "anreanal",
+                                Value = analId,
+                                Op = DBSQL.Op.Equal,
+                                Conj = DBSQL.Conj.None,
+                            }
+                        },
+                    };
+                result = DBSQL.DeleteOperation(connectionString, table, conditions);
+                log.Info(string.Format("Deleted {0} records!", result));
+            }
+            catch (Exception ex)
+            {
+                string msg = "An Error occured! Exception detected!";
+                log.Info(msg);
+                log.Error(msg + "\n" + ex.Message);
+            }
+
+            tw.Stop();
+
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return result;
+        }
     }
 }

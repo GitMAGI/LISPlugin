@@ -94,5 +94,31 @@ namespace BusinessLogicLayer
 
             return toReturn;
         }
+        public int DeleteRisultatiByIdAnalisi(string analid)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            int result = 0;
+
+            try
+            {
+                result = dal.DeleteRisultatiByAnalisi(analid);
+                log.Info(string.Format("{0} items Deleted!", result));
+            }
+            catch (Exception ex)
+            {
+                string msg = "An Error occured! Exception detected!";
+                log.Info(msg);
+                log.Error(msg + "\n" + ex.Message);
+            }
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return result;
+        }
     }
 }

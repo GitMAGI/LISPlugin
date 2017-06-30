@@ -50,10 +50,20 @@ namespace IDAL
         List<VO.RisultatoVO> GetRisultatiByAnalId(string id);
         VO.RisultatoVO NewRisultato(VO.RisultatoVO data);
         List<VO.RisultatoVO> NewRisultati(List<VO.RisultatoVO> data);
+        int DeleteRisultatiByAnalisi(string analId);
 
         VO.RefertoVO GetRefertoById(string refeidid);
         VO.RefertoVO GetRefertoByEsamId(string esamidid);
         int SetReferto(VO.RefertoVO data);
         int DeleteRefertoById(string refeidid);
+
+        VO.RepartoVO GetRepartoById(string repaidid);
+        VO.RepartoVO GetRepartoByNome(string repanome);
+
+        VO.PrestazioneVO GetPrestazioneById(string presidid);
+        VO.PrestazioneVO GetPrestazioneByEvento(string evenidid);
+        int SetPrestazione(VO.PrestazioneVO data);
+        VO.PrestazioneVO NewPrestazione(VO.PrestazioneVO data);
+        int DeletePrestazioneById(string presidid);
     }
 }

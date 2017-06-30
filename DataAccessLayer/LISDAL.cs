@@ -19,5 +19,7 @@ namespace DataAccessLayer
         public string RisultatoGrezzoTabName = ConfigurationManager.AppSettings["tbn_anretrash"];
         public string RisultatoTabName = ConfigurationManager.AppSettings["tbn_anre"];
         public string RefertoTabName = ConfigurationManager.AppSettings["tbn_refe"];
+        public string RepartoTabName = ConfigurationManager.AppSettings["tbn_repa"];
+        public string PrestazioneTabName = ConfigurationManager.AppSettings["tbn_pres"];
     }
 }

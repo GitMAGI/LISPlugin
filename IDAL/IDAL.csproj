@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IDAL</RootNamespace>
     <AssemblyName>IDAL</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,11 +43,13 @@
   <ItemGroup>
     <Compile Include="ILISDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VO\PrestazioneVO.cs" />
     <Compile Include="VO\LabelVO.cs" />
     <Compile Include="VO\EventoVO.cs" />
     <Compile Include="VO\EpisodioVO.cs" />
     <Compile Include="VO\AnalisiVO.cs" />
     <Compile Include="VO\PazienteVO.cs" />
+    <Compile Include="VO\RepartoVO.cs" />
     <Compile Include="VO\RichiestaLISVO.cs" />
     <Compile Include="VO\RefertoVO.cs" />
     <Compile Include="VO\RisultatoVO.cs" />

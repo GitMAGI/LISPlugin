@@ -13,6 +13,7 @@ namespace IBLL
         DTO.EventoDTO GetEventoById(string id);
         DTO.EventoDTO AddEvento(DTO.EventoDTO data);
         DTO.EventoDTO UpdateEvento(DTO.EventoDTO data);
+        int DeleteEventoById(string evendid);
 
         List<DTO.RichiestaLISDTO> GetRichiesteLISByEven(string episid);
         DTO.RichiestaLISDTO GetRichiestaLISById(string richidid);
@@ -39,17 +40,29 @@ namespace IBLL
         List<DTO.RisultatoDTO> GetRisultatiByEsamAnalId(string id);
         List<DTO.RisultatoDTO> GetRisultatiByAnalId(string id);
         List<DTO.RisultatoDTO> AddRisultati(List<DTO.RisultatoDTO> data);
+        int DeleteRisultatiByIdAnalisi(string analid);
 
         DTO.MirthResponseDTO ORLParser(string raw);
         string SendMirthRequest(string richidid);
         List<DTO.LabelDTO> StoreLabels(List<DTO.LabelDTO> labes);
-        int ChangeHL7StatusAndMessageAll(string richidid, string hl7_stato, string hl7_msg = null);
+        int ChangeHL7StatusAndMessageAll(string richidid, string presidid, string hl7_stato, string hl7_msg = null);
         List<DTO.AnalisiDTO> ChangeHL7StatusAndMessageAnalisis(List<string> analidids, string hl7_stato, string hl7_msg = null);
         DTO.RichiestaLISDTO ChangeHL7StatusAndMessageRichiestaLIS(string richidid, string hl7_stato, string hl7_msg = null);
+        DTO.PrestazioneDTO ChangeHL7StatusAndMessagePrestazione(string presidid, string hl7_stato, string hl7_msg = null);
         bool ValidateEsam(DTO.RichiestaLISDTO esam, ref string errorString);
+        bool ValidatePres(DTO.PrestazioneDTO pres, ref string errorString);
         bool ValidateAnals(List<DTO.AnalisiDTO> anals, ref string errorString);
 
         DTO.RefertoDTO GetRefertoByEsamId(string id);
         DTO.RefertoDTO GetRefertoById(string id);
+
+        DTO.RepartoDTO GetRepartoById(string id);
+        DTO.RepartoDTO GetRepartoByNome(string nome);
+
+        DTO.PrestazioneDTO GetPrestazioneById(string presidid);
+        DTO.PrestazioneDTO GetPrestazioneByEvento(string evenidid);
+        DTO.PrestazioneDTO AddPrestazione(DTO.PrestazioneDTO data);
+        DTO.PrestazioneDTO UpdatePrestazione(DTO.PrestazioneDTO data);
+        int DeletePrestazioneById(string presidid);
     }
 }

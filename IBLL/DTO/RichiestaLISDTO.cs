@@ -8,7 +8,7 @@ namespace IBLL.DTO
         public int? esameven { get; set; }
         public DateTime? esamdapr { get; set; }
         public DateTime? esamorpr { get; set; }
-        public int? esamurge { get; set; }
+        public short? esamurge { get; set; }
         public string esamrout { get; set; }
         public string esamesec { get; set; }
         public int? esamtipo { get; set; }

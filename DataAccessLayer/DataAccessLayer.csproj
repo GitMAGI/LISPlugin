@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DataAccessLayer</RootNamespace>
     <AssemblyName>DataAccessLayer</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAO\RepartoDAO.cs" />
     <Compile Include="DAO\RefertoDAO.cs" />
     <Compile Include="DAO\LabelDAO.cs" />
     <Compile Include="DAO\EventoDAO.cs" />
@@ -61,10 +63,13 @@
     <Compile Include="DAO\AnalisiDAO.cs" />
     <Compile Include="DAO\MirthDAO.cs" />
     <Compile Include="DAO\PazienteDAO.cs" />
+    <Compile Include="DAO\PrestazioneDAO.cs" />
     <Compile Include="DAO\RichiestaLISDAO.cs" />
     <Compile Include="DAO\RisultatoDAO.cs" />
     <Compile Include="DAO\RisultatoGrezzoDAO.cs" />
     <Compile Include="DBSQL.cs" />
+    <Compile Include="Mappers\RepartoMapper.cs" />
+    <Compile Include="Mappers\PrestazioneMapper.cs" />
     <Compile Include="Mappers\RefertoMapper.cs" />
     <Compile Include="Mappers\RisultatoMapper.cs" />
     <Compile Include="Mappers\LabelMapper.cs" />

@@ -125,7 +125,7 @@ namespace DataAccessLayer
 
             log.Info(string.Format("Starting ..."));
 
-            string table = this.AnalisiTabName;
+            string table = this.EpisodioTabName;
 
             try
             {

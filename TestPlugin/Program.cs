@@ -12,46 +12,62 @@ namespace TestPlugin
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            RichiestaLISDTO esam = new RichiestaLISDTO()
+            EventoDTO even = new EventoDTO()
             {
-                esameven = 2182265,
-                esamtipo = 0,
-                esampren = DateTime.Now,
-                hl7_stato = IBLL.HL7StatesRichiestaLIS.Sending,
+                evenepis = 112986,
+                evenreri = 17,
+                eventipo = 1,
+                evenperi = 306,
+                evenrees = 22,
+                evendata = Convert.ToDateTime("2017-01-01T00:10:34"),
+                evenrepp = 0,
+                evendaef = Convert.ToDateTime("2017-01-01T02:45:01"),
             };
-            // Insert ESAM
+
+            PrestazioneDTO pres = new PrestazioneDTO()
+            {
+                presstat = 0,
+                prestipo = 217,
+                presurge = true,
+                prespren = Convert.ToDateTime("2017-01-06T18:00:00"),
+                presrico = 6,
+                presflcc = 0,
+                prespers = "MARTELLA LUCIANO",
+                preserog = 0,
+                presannu = 0,
+            };
+
+            RichiestaLISDTO esam = new RichiestaLISDTO()
+            {                
+                esamtipo = 0,
+                esampren = DateTime.Now,                
+            };            
 
             List<AnalisiDTO> anals = new List<AnalisiDTO>()
             {
                 new AnalisiDTO()
-                {
-                    analesam = esam.esamidid,
+                {                    
                     analcodi = "EMO",
                     analnome = "EMOCROMO",
                     analflro = 0,
                     analinvi = 0,
-                    analextb = "235",
-                    hl7_stato = IBLL.HL7StatesAnalisi.Sending,
+                    analextb = "235",                    
                 },
                 new AnalisiDTO()
-                {
-                    analesam = esam.esamidid,
+                {                    
                     analcodi = "AMI",
                     analnome = "AMILASI",
                     analflro = 0,
                     analinvi = 0,
-                    analextb = "273",
-                    hl7_stato = IBLL.HL7StatesAnalisi.Sending,
+                    analextb = "273",                    
                 },
                 new AnalisiDTO()
-                {
-                    analesam = esam.esamidid,
+                {                    
                     analcodi = "BIF",
                     analnome = "BILIRUBINA DIRETTA",
                     analflro = 0,
                     analinvi = 0,
-                    analextb = "281",
-                    hl7_stato = IBLL.HL7StatesAnalisi.Sending,
+                    analextb = "281",                    
                 },
             };
 
@@ -59,12 +75,27 @@ namespace TestPlugin
 
             LISPlugin.LIS lis = new LISPlugin.LIS();
 
-            //string richid = lis.ScheduleNewRequest(esam, anals, ref errs);
+            //string richid = lis.ScheduleNewRequest(even, pres, esam, anals, ref errs);
+            //string richid = "8682285";
+
+            //MirthResponseDTO resp = lis.SubmitNewRequest(richid, ref errs);
+
+            //PrestazioneDTO pres_ = lis.RetrievePresByEven("2182273");
+
+            //PazienteDTO pazi = lis.RetrievePazi("571010");
+            
+                 
+            EpisodioDTO epis = 
+
+
+
+            /*
             string evenid = "2182265";
             string richid = "8682284";
             string analid1 = "4645449";
             string analid2 = "4645450";
             string analid3 = "4645451";
+            */
 
             //List<RichiestaLISDTO> richs = lis.Check4Exams(evenid);
             //List<AnalisiDTO> anals_ = lis.Check4Analysis(richid);
@@ -78,11 +109,15 @@ namespace TestPlugin
 
             //bool cnl = lis.CheckIfCancelingIsAllowed(richid, ref errs);
 
+            /*
             List<int> red = null;
 
             int r = 0;
             if (red != null && red.Count > 0)
                 r = 1;
+            */
+
+            //RefertoDTO refe = lis.Check4Report(richid);
 
             sw.Stop();
 

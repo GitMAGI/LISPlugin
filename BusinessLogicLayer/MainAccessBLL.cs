@@ -180,7 +180,8 @@ namespace BusinessLogicLayer
             
             return labes_;
         }
-        public int ChangeHL7StatusAndMessageAll(string richidid, string hl7_stato, string hl7_msg = null)
+
+        public int ChangeHL7StatusAndMessageAll(string richidid, string presidid, string hl7_stato, string hl7_msg = null)
         {
             Stopwatch tw = new Stopwatch();
             tw.Start();
@@ -205,9 +206,25 @@ namespace BusinessLogicLayer
                 esamres++;
             else
                 log.Info(string.Format("An Error occurred. Record not updated! ESAMIDID: {0}", got.esamidid));
-            res = esamres;
+            res += esamres;
 
             log.Info(string.Format("Updated {0}/{1} record!", esamres, 1));
+
+            log.Info(string.Format("Updating PRES ..."));
+
+            PrestazioneDTO got2 = GetPrestazioneById(presidid);
+            got2.hl7_stato = hl7_stato;
+            got2.hl7_msg = hl7_msg != null ? hl7_msg : got2.hl7_msg;
+            PrestazioneDTO updt1 = UpdatePrestazione(got2);
+
+            int presres = 0;
+            if (updt1 != null)
+                presres++;
+            else
+                log.Info(string.Format("An Error occurred. Record not updated! PRESIDID: {0}", got2.presidid));
+            res += presres;
+
+            log.Info(string.Format("Updated {0}/{1} record!", presres, 1));
 
             log.Info(string.Format("Updating ANAL ..."));
             List<AnalisiDTO> gots = GetAnalisisByRichiesta(richidid);
@@ -244,8 +261,6 @@ namespace BusinessLogicLayer
             if (hl7_msg != null)
                 msg_ += " and 'hl7_msg'-> " + hl7_msg;
             log.Info(string.Format(msg_));
-
-            log.Info(string.Format("Updating ANAL ..."));
 
             log.Info(string.Format("Updating ANAL ..."));
             List<AnalisiDTO> gots = GetAnalisisByIds(analidids);
@@ -308,7 +323,131 @@ namespace BusinessLogicLayer
 
             return updated;
         }
+        public PrestazioneDTO ChangeHL7StatusAndMessagePrestazione(string presidid, string hl7_stato, string hl7_msg = null)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
 
+            PrestazioneDTO updated = new PrestazioneDTO();
+
+            log.Info(string.Format("Starting ..."));
+
+            string msg_ = "Status updating with 'hl7_stato'-> " + hl7_stato;
+            if (hl7_msg != null)
+                msg_ += " and 'hl7_msg'-> " + hl7_msg;
+            log.Info(string.Format(msg_));
+
+            log.Info(string.Format("Updating PRES ..."));
+
+            PrestazioneDTO got = GetPrestazioneById(presidid);
+            got.hl7_stato = hl7_stato;
+            got.hl7_msg = hl7_msg != null ? hl7_msg : got.hl7_msg;
+            updated = UpdatePrestazione(got);
+
+            int res = 0;
+            if (updated != null)
+            {
+                res++;
+            }
+            else
+            {
+                log.Info(string.Format("An Error occurred. Record not updated! PRESIDID: {0}", got.presidid));
+            }
+            log.Info(string.Format("Updated {0}/{1} record!", res, 1));
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return updated;
+        }
+
+        public bool ValidateEven(EventoDTO even, ref string errorString)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            bool validate = true;
+
+            if (errorString == null)
+                errorString = "";
+            
+            if (even.evenepis == null)
+            {
+                string msg = "EVENEPIS is Null!";
+                validate = false;
+                if (errorString != "")
+                    errorString += "\r\n" + "EVEN error: " + msg;
+                else
+                    errorString += "EVEN error: " + msg;
+            }
+            if (even.evenreri == null)
+            {
+                string msg = "EVENRERI is Null!";
+                validate = false;
+                if (errorString != "")
+                    errorString += "\r\n" + "EVEN error: " + msg;
+                else
+                    errorString += "EVEN error: " + msg;
+            }
+            if (even.evenrees == null)
+            {
+                string msg = "EVENREES is Null!";
+                validate = false;
+                if (errorString != "")
+                    errorString += "\r\n" + "EVEN error: " + msg;
+                else
+                    errorString += "EVEN error: " + msg;
+            }
+            if (even.evendata == null)
+            {
+                string msg = "EVENDATA is Null!";
+                validate = false;
+                if (errorString != "")
+                    errorString += "\r\n" + "EVEN error: " + msg;
+                else
+                    errorString += "EVEN error: " + msg;
+            }
+
+            if (errorString == "")
+                errorString = null;
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return validate;
+        }
+        public bool ValidatePres(PrestazioneDTO pres, ref string errorString)
+        {
+            Stopwatch tw = new Stopwatch();
+            tw.Start();
+
+            log.Info(string.Format("Starting ..."));
+
+            bool validate = true;
+
+            if (errorString == null)
+                errorString = "";
+
+            if (pres.preseven == null)
+            {
+                string msg = "PRESEVEN is Null!";
+                validate = false;
+                if (errorString != "")
+                    errorString += "\r\n" + "PRES error: " + msg;
+                else
+                    errorString += "PRES error: " + msg;
+            }            
+
+            if (errorString == "")
+                errorString = null;
+
+            tw.Stop();
+            log.Info(string.Format("Completed! Elapsed time {0}", LibString.TimeSpanToTimeHmsms(tw.Elapsed)));
+
+            return validate;
+        }
         public bool ValidateEsam(RichiestaLISDTO esam, ref string errorString)
         {
             Stopwatch tw = new Stopwatch();

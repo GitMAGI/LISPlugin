@@ -30,7 +30,7 @@ namespace DataAccessLayer.Mappers
             esam.esameven = row["esameven"] != DBNull.Value ? (int)row["esameven"] : (int?)null;
             esam.esamdapr = row["esamdapr"] != DBNull.Value ? (DateTime)row["esamdapr"] : (DateTime?)null;
             esam.esamorpr = row["esamorpr"] != DBNull.Value ? (DateTime)row["esamorpr"] : (DateTime?)null;
-            esam.esamurge = row["esamurge"] != DBNull.Value ? (int)row["esamurge"] : (int?)null;
+            esam.esamurge = row["esamurge"] != DBNull.Value ? (short)row["esamurge"] : (short?)null;
             esam.esamrout = row["esamrout"] != DBNull.Value ? (string)row["esamrout"] : null;
             esam.esamesec = row["esamesec"] != DBNull.Value ? (string)row["esamesec"] : null;
             esam.esamtipo = row["esamtipo"] != DBNull.Value ? (int)row["esamtipo"] : (int?)null;
@@ -39,6 +39,7 @@ namespace DataAccessLayer.Mappers
             esam.esamconf = row["esamconf"] != DBNull.Value ? (int)row["esamconf"] : (int?)null;
             esam.esamdmod = row["esamdmod"] != DBNull.Value ? (string)row["esamdmod"] : null;
             esam.hl7_stato = row["hl7_stato"] != DBNull.Value ? (string)row["hl7_stato"] : null;
+            esam.hl7_msg = row["hl7_msg"] != DBNull.Value ? (string)row["hl7_msg"] : null;
 
             return esam; ;
         }

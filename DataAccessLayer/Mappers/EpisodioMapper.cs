@@ -14,7 +14,7 @@ namespace DataAccessLayer.Mappers
 
             epis.episidid = row["EPISIDID"] != DBNull.Value ? (int)row["EPISIDID"] : (int?)null;
             epis.epispazi = row["EPISPAZI"] != DBNull.Value ? (int)row["EPISPAZI"] : (int?)null;
-            epis.epistipo = row["EPISTIPO"] != DBNull.Value ? (int)row["EPISTIPO"] : (int?)null;
+            epis.epistipo = row["EPISTIPO"] != DBNull.Value ? (short)row["EPISTIPO"] : (short?)null;
             epis.episdain = row["EPISDAIN"] != DBNull.Value ? (DateTime)row["EPISDAIN"] : (DateTime?)null;
             epis.episdafi = row["EPISDAFI"] != DBNull.Value ? (DateTime)row["EPISDAFI"] : (DateTime?)null;
             epis.epischiu = row["EPISCHIU"] != DBNull.Value ? (bool)row["EPISCHIU"] : (bool?)null;
