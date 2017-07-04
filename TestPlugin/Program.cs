@@ -75,19 +75,16 @@ namespace TestPlugin
 
             LISPlugin.LIS lis = new LISPlugin.LIS();
 
-            //string richid = lis.ScheduleNewRequest(even, pres, esam, anals, ref errs);
+            string richid = lis.ScheduleNewRequest(even, pres, esam, anals, ref errs);
             //string richid = "8682285";
 
-            //MirthResponseDTO resp = lis.SubmitNewRequest(richid, ref errs);
+            MirthResponseDTO resp = lis.SubmitNewRequest(richid, ref errs);
 
             //PrestazioneDTO pres_ = lis.RetrievePresByEven("2182273");
 
             //PazienteDTO pazi = lis.RetrievePazi("571010");
-            
-                 
-            EpisodioDTO epis = 
 
-
+            List<RisultatoDTO> riss = lis.RetrieveResults(richid, ref errs, true);
 
             /*
             string evenid = "2182265";

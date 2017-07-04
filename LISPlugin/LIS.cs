@@ -9,8 +9,7 @@ namespace LISPlugin
 {
     public class LIS : ILISPlugin.ILIS
     {
-        private static readonly log4net.ILog log =
-            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private DataAccessLayer.LISDAL dal;
         private BusinessLogicLayer.LISBLL bll;
@@ -522,8 +521,6 @@ namespace LISPlugin
 
             return repa;
         }
-
-
         public PazienteDTO RetrievePazi(string paziid)
         {
             Stopwatch tw = new Stopwatch();
@@ -827,7 +824,7 @@ namespace LISPlugin
                     List<RisultatoDTO> anres = bll.GetRisultatiByAnalId(anal.analidid.Value.ToString());
                     if (anres != null && anres.Count > 0)
                     {
-                        log.Info(string.Format("Found {0} Results related to Analysis ID {1}.", anres, anal.analidid.Value.ToString()));
+                        log.Info(string.Format("Found {0} Results related to Analysis ID {1}.", anres.Count, anal.analidid.Value.ToString()));
                         //0. Check if updating is set to Forced!
                         if (forceUpdating != null)
                         {
